@@ -37,6 +37,8 @@ public class MainController {
     @FXML
     public Label nbCoupLabel;
 
+    //MediaPlayer mediaPlayer;
+
     // "initialize()" est appelé par JavaFX à l'affichage de la fenêtre
     @FXML
     public void initialize() {
@@ -101,6 +103,7 @@ public class MainController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
         }
+        //Permet de lancer le timer au commencement du jeu
         Game.context.getTimeline().setCycleCount(Timeline.INDEFINITE);
         Game.context.getTimeline().play();
     }
