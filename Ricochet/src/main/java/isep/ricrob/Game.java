@@ -5,9 +5,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.css.Size;
 import javafx.util.Duration;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -26,6 +24,7 @@ public class Game {
     // Taille du plateau (SIZE x SIZE)
     public static final int SIZE = 16;
 
+    //Les plateaux partiels avec chaque case et les obstacles correspondant
     public int[][][] partialBoardHard1 = new int[][][]{{{1, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 1, 0, 1, 0}, {1, 1, 0, 0, 0}, {1, 1, 1, 1, 0}},
             {{1, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 1, 0, 0}},
             {{1, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 1, 1, 0, 0}, {1, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}},
@@ -62,11 +61,13 @@ public class Game {
             {{1, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}},
             {{1, 0, 0, 1, 0}, {0, 0, 0, 1, 0}, {0, 1, 0, 1, 0}, {1, 0, 0, 1, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 1, 0}}};
 
+    //Plateau de chaque case  avec la classe Tile
     public Tile[][] partialBoard1 = new Tile[SIZE / 2][SIZE / 2];
     public Tile[][] partialBoard2 = new Tile[SIZE / 2][SIZE / 2];
     public Tile[][] partialBoard3 = new Tile[SIZE / 2][SIZE / 2];
     public Tile[][] partialBoard4 = new Tile[SIZE / 2][SIZE / 2];
 
+    //Permet de commencer la partie
     public static void start() {
         if (Game.context != null) {
             throw new RuntimeException
@@ -82,11 +83,9 @@ public class Game {
     // Constructeur privé (instance unique créée par "start()" )
     private Game() {
         board = new Tile[SIZE][SIZE];
-        generatePartialBoard();
-        //generateCleanBoard();
-        generateBoardWithPartialBoard();
-        System.out.println("\n");
-        displayBoard(board);
+
+        generatePartialBoard();// Permet de transformer les tableau int[][][] en tableau Tile[][]
+        generateBoardWithPartialBoard();//Generer le plateau entier avec des plateaux partiels
 
         robots = new HashMap<>();
         robots.put(RED, new Token(RED));
@@ -94,15 +93,16 @@ public class Game {
         robots.put(BLUE, new Token(BLUE));
         robots.put(YELLOW, new Token(YELLOW));
 
-        for (Map.Entry<Token.Color, Token> entry : robots.entrySet()) {
+        for (Map.Entry<Token.Color, Token> entry : robots.entrySet()) {//détéction de la position initiale des robotspour créer un obstacle
             this.board[entry.getValue().getLig()][entry.getValue().getCol()].setMid(1);
         }
 
-        Token.Color[] colors = Token.Color.values();
+        Token.Color[] colors = Token.Color.values();//Création de la cible avec une couleur aléatoire
         int randomColorIndex = (new Random()).nextInt(colors.length);
         target = new Token(colors[randomColorIndex]);
     }
 
+    //Affichage du plateaux dans la console pour le debug
     private void displayBoard(Tile[][] boardDis) {
         for (int i = 0; i < boardDis.length; i++) {
             for (int j = 0; j < boardDis.length; j++) {
@@ -112,6 +112,7 @@ public class Game {
             System.out.print("\n");
         }
     }
+
 
     private void generatePartialBoard() {
         for (int i = 0; i < SIZE / 2; i++) {
@@ -160,49 +161,25 @@ public class Game {
         partialBoard4 = rotatePartialBoard90(partialBoard4);
         partialBoard3 = rotatePartialBoard90(rotatePartialBoard90(partialBoard3));
         partialBoard2 = rotatePartialBoard90(rotatePartialBoard90(rotatePartialBoard90(partialBoard2)));
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                board[i][j] = new Tile(9, 9, 9, 9, 9);
-            }
-        }
-        for (int i = 0; i < SIZE / 2; i++) {
+
+        for (int i = 0; i < SIZE / 2; i++) {//Création du coin haut gauche
             for (int j = 0; j < SIZE / 2; j++) {
                 board[i][j] = new Tile(partialBoard4[i][j]);
             }
         }
-        for (int i = 0; i < SIZE / 2; i++) {
+        for (int i = 0; i < SIZE / 2; i++) {//Création du coin haut droite
             for (int j = 0; j < SIZE / 2; j++) {
                 board[i][SIZE / 2 + j] = new Tile(partialBoard3[i][j]);
             }
         }
-        for (int i = 0; i < SIZE / 2; i++) {
+        for (int i = 0; i < SIZE / 2; i++) {//Création du coin bas droite
             for (int j = 0; j < SIZE / 2; j++) {
                 board[SIZE / 2 + i][SIZE / 2 + j] = new Tile(partialBoard2[i][j]);
             }
         }
-        for (int i = 0; i < SIZE / 2; i++) {
+        for (int i = 0; i < SIZE / 2; i++) {//Création du coin bas gauche
             for (int j = 0; j < SIZE / 2; j++) {
                 board[SIZE / 2 + i][j] = new Tile(partialBoard1[i][j]);
-            }
-        }
-    }
-
-    private void generateCleanBoard() {
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                board[i][j] = new Tile(0, 0, 0, 0, 0);
-                if (i == 0) {
-                    board[i][j].setLeft(1);
-                }
-                if (i == SIZE - 1) {
-                    board[i][j].setRight(1);
-                }
-                if (j == 0) {
-                    board[i][j].setUp(1);
-                }
-                if (j == SIZE - 1) {
-                    board[i][j].setDown(1);
-                }
             }
         }
     }
@@ -234,7 +211,6 @@ public class Game {
             ) {
                 return "Les déplacements en diagonale sont interdits";
             } else {
-                displayBoard(board);
                 board[this.selectedRobot.getLig()][this.selectedRobot.getCol()].setMid(0);
                 int[] newColLig = selectTile(chooseDirection(col, lig));
                 col = newColLig[0];
@@ -242,31 +218,33 @@ public class Game {
                 System.out.println("col : " + col + " ligne : " + lig);
                 this.selectedRobot.setPosition(col, lig);
                 board[lig][col].setMid(1);
-                System.out.println("\n");
-                displayBoard(board);
-                System.out.println("\n");
+
                 // Action suivante attendue : choisir un robot
                 setStatus(CHOOSE_ROBOT);
+
                 if (!victoryBool) {
                     this.nbCoup += 1;
                 }
-                setNbCoup();
-                victory();
+
+                setNbCoup();//Change le Label nbCoup
+                victory();//Vérifier s'il y a eu victoire
                 return "MOVE";
             }
         }
         return null;
     }
 
+    //Vérification des conditions de victoire
     private void victory() {
         if (this.selectedRobot.getCol() == this.target.getCol() && this.selectedRobot.getLig() == this.target.getLig()
-                && this.selectedRobot.getColor() == this.target.getColor()) {
+                && this.selectedRobot.getColor() == this.target.getColor()) {// Si le pion est à la même position et de la même couleur que la cible
             System.out.println("Vous avez gagne");
             this.victoryBool = true;
             setNbCoup();
         }
     }
 
+    //Dterminer la direction dans laquelle à cliquer l'utilisateur par rapport au pion
     private direction chooseDirection(int col, int lig) {
         if (col < this.selectedRobot.getCol() && lig == this.selectedRobot.getLig()) {
             return direction.left;
@@ -283,18 +261,24 @@ public class Game {
 
     public enum direction {left, right, up, down, stay}
 
+    /*
+    Determiner la case où doit s'arrêter le pion
+
+    Paramètre : dir => la direction choisie
+
+    Output : Tableau d'entier des coordonnées de la nouvelle case du pion
+     */
     private int[] selectTile(direction dir) {
         int newCol = 0, newLig = 0;
         if (dir == direction.left) {
             newLig = this.selectedRobot.getLig();
             for (int i = this.selectedRobot.getCol(); i > 0; i--) {
                 System.out.println(board[i][this.selectedRobot.getLig()]);
-                if (board[this.selectedRobot.getLig()][i].getLeft() == 1) {
+                if (board[this.selectedRobot.getLig()][i].getLeft() == 1) {//S'il y a un obstacle
                     newCol = i;
                     break;
-                } else if (board[this.selectedRobot.getLig()][i - 1].getMid() == 1) {
+                } else if (board[this.selectedRobot.getLig()][i - 1].getMid() == 1) {//S'il y a déja un pion sur la case
                     newCol = i;
-                    System.out.println("pion adverse détected");
                     break;
                 }
             }
@@ -387,6 +371,7 @@ public class Game {
     private int nbCoup = 0;
     private boolean victoryBool = false;
 
+    //Changement du Label nbCoup
     public void setNbCoup() {
         // Mise à jour du libellé nbCoup sur l'affichage
         StringBuilder nbCoupMessage = new StringBuilder();
@@ -429,11 +414,11 @@ public class Game {
     // La cible
     private Token target;
 
-    //Le timer
     public Token getTarget() {
         return this.target;
     }
 
+    //Le timer
     private Time time = new Time(0);
     public StringProperty timerToolTipProperty = new SimpleStringProperty();
 
@@ -443,13 +428,9 @@ public class Game {
                         time.oneSecondPassed();
                         timerToolTipProperty.set(time.getCurrentTime());
                         if(time.getSecond()>30){
-                            //timerToolTipProperty.set
+                            //Mettre en rouge le timer quand il dépasse 30s
                         }
                     }));
-
-    public Time getTime() {
-        return this.time;
-    }
 
     public Timeline getTimeline() {
         return this.timeline;
