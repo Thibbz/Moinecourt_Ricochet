@@ -1,0 +1,23 @@
+.corner1{
+    -fx-background-image: url("img/corner1.PNG");
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+}
+
+.corner2{
+    -fx-background-image: url("img/corner2.PNG");
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+}
+
+.corner3{
+    -fx-background-image: url("img/corner3.PNG");
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+}
+
+.corner4{
+    -fx-background-image: url("img/corner4.PNG");
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+}
