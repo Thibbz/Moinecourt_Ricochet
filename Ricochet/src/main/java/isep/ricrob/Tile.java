@@ -2,6 +2,13 @@ package isep.ricrob;
 
 import javafx.scene.image.ImageView;
 
+/*
+Classe Tile correspondant à chaque case du tableau
+
+Attribut : left,right,up,down,mid => Un 1 s'il y a un mur dans la direction et un 0 s'il y en a pas
+
+Fonction : Getter, Setter, toString, Constructeur
+ */
 public class Tile {
 
     int left;
